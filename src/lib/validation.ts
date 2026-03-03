@@ -1,7 +1,4 @@
 
- * Validation utilities for input sanitization and security
- */
-
 /**
  * Validates a YouTube video ID (typically 11 characters, alphanumeric with hyphens and underscores)
  */

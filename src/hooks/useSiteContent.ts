@@ -2,6 +2,35 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+const BLOG_LIST_COLUMNS = "id,title,excerpt,image_url,date,read_time,author,category,slug,created_at";
+const BLOG_FULL_COLUMNS = `${BLOG_LIST_COLUMNS},content,sort_order`;
+const OPEN_TRACK_LIST_COLUMNS = "id,slug,title,intro_text,image_url,channel_name,channel_url";
+const OPEN_TRACK_FULL_COLUMNS =
+  "id,slug,title,intro_text,image_url,channel_name,channel_url,youtube_id,why_matters_title,why_matters_content,how_we_learn_title,how_we_learn_content,bottom_text,cta_text,cta_link,content,sort_order,created_at,updated_at";
+const HERO_CONTENT_COLUMNS =
+  "id,badge_text,description,explainer_line,heading_highlight,heading_line1,heading_line2,micro_text,subline,created_at,updated_at";
+const HERO_IMAGES_COLUMNS = "id,src,alt,sort_order,created_at";
+const ABOUT_CONTENT_COLUMNS =
+  "id,heading_line1,heading_highlight,heading_line2,paragraph1,paragraph2,paragraph3,paragraph4,paragraph5,youtube_url,created_at,updated_at";
+const ABOUT_STATS_COLUMNS = "id,label,value,sort_order,created_at";
+const FOUNDER_CONTENT_COLUMNS =
+  "id,name,title,image_url,quote,bio_paragraph1,bio_paragraph2,created_at,updated_at";
+const LEARNER_TRACK_COLUMNS = "id,youtube_id,title,sort_order,created_at";
+const YOUTUBE_CHANNEL_COLUMNS = "id,name,url,description,thumbnail,color_from,color_to,sort_order,created_at";
+const TESTIMONIAL_COLUMNS = "id,name,role,role_color,image_url,story,sort_order,created_at";
+const TESTIMONIAL_SETTINGS_COLUMNS = "id,youtube_url,created_at,updated_at";
+const DIFFERENTIATOR_COLUMNS = "id,title,description,sort_order,created_at";
+const FAQ_COLUMNS = "id,question,answer,sort_order,created_at";
+const CTA_CONTENT_COLUMNS = "id,heading_line1,heading_highlight,description,created_at,updated_at";
+const FOOTER_CONTENT_COLUMNS = "id,tagline,address,phone,email,copyright_text,created_at,updated_at";
+const SOCIAL_LINK_COLUMNS = "id,platform,url,sort_order,created_at";
+const GOOGLE_REVIEW_COLUMNS =
+  "id,reviewer_name,reviewer_image_url,review_date,rating,review_text,sort_order,is_visible,created_at,updated_at";
+const GOOGLE_REVIEW_SETTINGS_COLUMNS = "id,section_title,total_reviews_count,google_place_id,embed_code,created_at,updated_at";
+const GALLERY_IMAGE_COLUMNS = "id,image_url,alt_text,sort_order,created_at,updated_at";
+
+export { BLOG_FULL_COLUMNS, OPEN_TRACK_FULL_COLUMNS };
+
 // Hero Content
 export const useHeroContent = () => {
   return useQuery({
@@ -9,7 +38,7 @@ export const useHeroContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hero_content")
-        .select("*")
+        .select(HERO_CONTENT_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -43,7 +72,7 @@ export const useHeroImages = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hero_images")
-        .select("*")
+        .select(HERO_IMAGES_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -108,7 +137,7 @@ export const useAboutContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("about_content")
-        .select("*")
+        .select(ABOUT_CONTENT_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -142,7 +171,7 @@ export const useAboutStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("about_stats")
-        .select("*")
+        .select(ABOUT_STATS_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -176,7 +205,7 @@ export const useFounderContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("founder_content")
-        .select("*")
+        .select(FOUNDER_CONTENT_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -210,7 +239,7 @@ export const useLearnerTracks = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("learner_tracks")
-        .select("*")
+        .select(LEARNER_TRACK_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -269,13 +298,14 @@ export const useDeleteLearnerTrack = () => {
 };
 
 // Open Learning Tracks
-export const useOpenLearningTracks = () => {
+export const useOpenLearningTracks = (options?: { includeFullContent?: boolean }) => {
   return useQuery({
     queryKey: ["open-learning-tracks"],
     queryFn: async () => {
+      const columns = options?.includeFullContent ? OPEN_TRACK_FULL_COLUMNS : OPEN_TRACK_LIST_COLUMNS;
       const { data, error } = await supabase
         .from("open_learning_tracks")
-        .select("*")
+        .select(columns)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -309,7 +339,7 @@ export const useYoutubeChannels = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("youtube_channels")
-        .select("*")
+        .select(YOUTUBE_CHANNEL_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -374,7 +404,7 @@ export const useTestimonials = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("testimonials")
-        .select("*")
+        .select(TESTIMONIAL_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -439,7 +469,7 @@ export const useTestimonialsSettings = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("testimonials_settings")
-        .select("*")
+        .select(TESTIMONIAL_SETTINGS_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -473,7 +503,7 @@ export const useDifferentiators = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("differentiators")
-        .select("*")
+        .select(DIFFERENTIATOR_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -532,13 +562,14 @@ export const useDeleteDifferentiator = () => {
 };
 
 // Blogs
-export const useBlogs = (limit?: number) => {
+export const useBlogs = (limit?: number, options?: { includeContent?: boolean }) => {
   return useQuery({
-    queryKey: ["blogs", limit],
+    queryKey: ["blogs", limit, options?.includeContent ?? false],
     queryFn: async () => {
+      const columns = options?.includeContent ? BLOG_FULL_COLUMNS : BLOG_LIST_COLUMNS;
       let query = supabase
         .from("blogs")
-        .select("*")
+        .select(columns)
         .order("created_at", { ascending: false });
       
       if (limit) {
@@ -558,7 +589,7 @@ export const useBlogBySlug = (slug: string) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
-        .select("*")
+        .select(BLOG_FULL_COLUMNS)
         .eq("slug", slug)
         .single();
       if (error) throw error;
@@ -576,7 +607,10 @@ export const useBlogCategories = () => {
         .from("blogs")
         .select("category");
       if (error) throw error;
-      const categories = [...new Set(data?.map(b => b.category) || [])];
+      const categoryRows = (data ?? []) as Array<{ category: string | null }>;
+      const categories = [
+        ...new Set(categoryRows.map((blog) => blog.category).filter((category): category is string => Boolean(category))),
+      ];
       return categories;
     },
   });
@@ -639,7 +673,7 @@ export const useFaqs = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("faqs")
-        .select("*")
+        .select(FAQ_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -704,7 +738,7 @@ export const useCtaContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cta_content")
-        .select("*")
+        .select(CTA_CONTENT_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -738,7 +772,7 @@ export const useFooterContent = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("footer_content")
-        .select("*")
+        .select(FOOTER_CONTENT_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -772,7 +806,7 @@ export const useSocialLinks = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("social_links")
-        .select("*")
+        .select(SOCIAL_LINK_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -806,7 +840,7 @@ export const useGoogleReviews = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("google_reviews")
-        .select("*")
+        .select(GOOGLE_REVIEW_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -879,7 +913,7 @@ export const useGoogleReviewsSettings = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("google_reviews_settings")
-        .select("*")
+        .select(GOOGLE_REVIEW_SETTINGS_COLUMNS)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -913,7 +947,7 @@ export const useGalleryImages = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("gallery_images")
-        .select("*")
+        .select(GALLERY_IMAGE_COLUMNS)
         .order("sort_order");
       if (error) throw error;
       return data;
@@ -970,4 +1004,3 @@ export const useDeleteGalleryImage = () => {
     },
   });
 };
-

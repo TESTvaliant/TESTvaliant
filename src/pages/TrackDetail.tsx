@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, Home, ArrowLeft, ExternalLink, Youtube, Lightbulb, BookOpen } from "lucide-react";
-import { useOpenLearningTracks } from "@/hooks/useSiteContent";
+import { OPEN_TRACK_FULL_COLUMNS, useOpenLearningTracks } from "@/hooks/useSiteContent";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -35,7 +35,7 @@ const TrackDetail = () => {
   const {
     data: tracks,
     isLoading
-  } = useOpenLearningTracks();
+  } = useOpenLearningTracks({ includeFullContent: true });
   const [trackData, setTrackData] = useState<any>(null);
 
   // Find track by slug from fetched tracks
@@ -47,7 +47,11 @@ const TrackDetail = () => {
       if (!trackFromList && slug && !isLoading) {
         const {
           data
-        } = await supabase.from("open_learning_tracks").select("*").eq("id", slug).single();
+        } = await supabase
+          .from("open_learning_tracks")
+          .select(OPEN_TRACK_FULL_COLUMNS)
+          .eq("id", slug)
+          .single();
         if (data) setTrackData(data);
       }
     };

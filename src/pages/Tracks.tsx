@@ -130,6 +130,8 @@ const Tracks = () => {
                       <img
                         src={track.image_url}
                         alt={track.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
@@ -196,4 +198,3 @@ const Tracks = () => {
 };
 
 export default Tracks;
-

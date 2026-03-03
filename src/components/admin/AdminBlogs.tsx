@@ -22,7 +22,7 @@ const generateSlug = (title: string): string => {
 };
 
 const AdminBlogs = () => {
-  const { data: blogs, isLoading } = useBlogs();
+  const { data: blogs, isLoading } = useBlogs(undefined, { includeContent: true });
   const updateBlog = useUpdateBlog();
   const addBlog = useAddBlog();
   const deleteBlog = useDeleteBlog();

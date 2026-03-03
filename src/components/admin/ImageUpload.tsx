@@ -59,6 +59,10 @@ const ImageUpload = ({ value, onChange, folder = "general", label = "Image" }: I
         throw error;
       }
 
+      if (!data?.path) {
+        throw new Error("Upload returned empty path");
+      }
+
       // Get the public URL
       const { data: urlData } = supabase.storage
         .from("site-images")
@@ -133,4 +137,3 @@ const ImageUpload = ({ value, onChange, folder = "general", label = "Image" }: I
 };
 
 export default ImageUpload;
-

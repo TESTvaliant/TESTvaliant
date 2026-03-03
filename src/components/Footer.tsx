@@ -120,7 +120,15 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
             className="space-y-6"
           >
             <a href="/" onClick={() => handleNavClick("/")}>
-              <img src="/testvaliant-logo-footer.png" alt="TESTvaliant" className="h-12 w-auto object-contain" />
+              <img
+                src="/testvaliant-logo-footer.png"
+                alt="TESTvaliant"
+                width={192}
+                height={48}
+                loading="lazy"
+                decoding="async"
+                className="h-12 w-auto object-contain"
+              />
             </a>
 
             <p className="text-white/65 text-sm leading-relaxed max-w-sm">{footerContent.tagline}</p>
@@ -277,4 +285,3 @@ const Footer = forwardRef<HTMLElement>((_, ref) => {
 Footer.displayName = "Footer";
 
 export default Footer;
-

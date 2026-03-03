@@ -9,7 +9,7 @@ const HeroSection = () => {
   const { data: heroImages } = useHeroImages();
   const [currentImage, setCurrentImage] = useState(0);
 
-  const images = heroImages || [];
+  const images = (heroImages as Array<{ src: string; alt: string }> | undefined) || [];
 
   useEffect(() => {
     if (images.length <= 1) return;
@@ -126,7 +126,7 @@ const HeroSection = () => {
               transition={{ delay: 0.5, duration: 0.4, ease: "easeOut" }}
               className="flex gap-2 pt-4"
             >
-              {displayImages.map((_, index) => (
+              {displayImages.map((_: { src: string; alt: string }, index: number) => (
                 <button
                   key={index}
                   onClick={() => handleImageChange(index)}
@@ -163,4 +163,3 @@ const HeroSection = () => {
 };
 
 export default memo(HeroSection);
-

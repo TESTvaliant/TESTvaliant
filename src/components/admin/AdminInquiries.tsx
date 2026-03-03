@@ -27,7 +27,6 @@ import {
 import { Download, Trash2, Loader2, Calendar, Mail, Phone, User, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import * as XLSX from "xlsx";
 
 interface Inquiry {
   id: string;
@@ -43,13 +42,14 @@ const AdminInquiries = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const { data: inquiries, isLoading } = useQuery({
     queryKey: ["inquiries", startDate, endDate],
     queryFn: async () => {
       let query = supabase
         .from("inquiries")
-        .select("*")
+        .select("id,name,phone,email,message,created_at")
         .order("created_at", { ascending: false });
 
       if (startDate) {
@@ -80,32 +80,40 @@ const AdminInquiries = () => {
     },
   });
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     if (!inquiries || inquiries.length === 0) {
       toast.error("No inquiries to export");
       return;
     }
 
-    const exportData = inquiries.map((inq) => ({
-      Name: inq.name,
-      Phone: inq.phone,
-      Email: inq.email,
-      Message: inq.message,
-      "Submitted At": format(new Date(inq.created_at), "yyyy-MM-dd HH:mm:ss"),
-    }));
+    setIsExporting(true);
+    try {
+      const XLSX = await import("xlsx");
+      const exportData = inquiries.map((inq) => ({
+        Name: inq.name,
+        Phone: inq.phone,
+        Email: inq.email,
+        Message: inq.message,
+        "Submitted At": format(new Date(inq.created_at), "yyyy-MM-dd HH:mm:ss"),
+      }));
 
-    const worksheet = XLSX.utils.json_to_sheet(exportData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Inquiries");
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Inquiries");
 
-    // Generate filename with date range
-    let filename = "inquiries";
-    if (startDate) filename += `_from_${startDate}`;
-    if (endDate) filename += `_to_${endDate}`;
-    filename += ".xlsx";
+      // Generate filename with date range
+      let filename = "inquiries";
+      if (startDate) filename += `_from_${startDate}`;
+      if (endDate) filename += `_to_${endDate}`;
+      filename += ".xlsx";
 
-    XLSX.writeFile(workbook, filename);
-    toast.success("Exported successfully!");
+      XLSX.writeFile(workbook, filename);
+      toast.success("Exported successfully!");
+    } catch {
+      toast.error("Failed to export inquiries");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const clearFilters = () => {
@@ -147,9 +155,9 @@ const AdminInquiries = () => {
             <Button variant="outline" onClick={clearFilters}>
               Clear Filters
             </Button>
-            <Button onClick={exportToExcel} className="ml-auto">
-              <Download className="w-4 h-4 mr-2" />
-              Export to Excel
+            <Button onClick={exportToExcel} className="ml-auto" disabled={isExporting}>
+              {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+              {isExporting ? "Exporting..." : "Export to Excel"}
             </Button>
           </div>
         </CardContent>
@@ -242,4 +250,3 @@ const AdminInquiries = () => {
 };
 
 export default AdminInquiries;
-

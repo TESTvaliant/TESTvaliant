@@ -53,7 +53,15 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <button onClick={() => handleNavClick("/")} className="flex items-center">
-              <img src="/testvaliant-logo.png" alt="TESTvaliant Logo" className="h-12 w-auto object-contain" />
+              <img
+                src="/testvaliant-logo.png"
+                alt="TESTvaliant Logo"
+                width={192}
+                height={48}
+                fetchPriority="high"
+                decoding="async"
+                className="h-12 w-auto object-contain"
+              />
             </button>
 
             {/* Desktop nav */}
@@ -103,4 +111,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

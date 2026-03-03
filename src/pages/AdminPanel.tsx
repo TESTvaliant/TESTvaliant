@@ -1,29 +1,30 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { 
-  LogOut, Home, Loader2, ShieldAlert, RefreshCw, 
-  LayoutDashboard, Image, Users, FileText, MessageSquare,
+  LogOut, Home, Loader2, ShieldAlert, RefreshCw,
+  LayoutDashboard, Users, FileText,
   Youtube, Star, Settings, ChevronLeft, ChevronRight,
   BookOpen, HelpCircle, Megaphone, Mail, ImageIcon, Quote, Inbox
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import AdminHeroSection from "@/components/admin/AdminHeroSection";
-import AdminAboutSection from "@/components/admin/AdminAboutSection";
-import AdminFounderSection from "@/components/admin/AdminFounderSection";
-import AdminOpenLearningTracks from "@/components/admin/AdminOpenLearningTracks";
-import AdminYoutubeChannels from "@/components/admin/AdminYoutubeChannels";
-import AdminTestimonials from "@/components/admin/AdminTestimonials";
-import AdminGoogleReviews from "@/components/admin/AdminGoogleReviews";
-import AdminGallery from "@/components/admin/AdminGallery";
-import AdminDifferentiators from "@/components/admin/AdminDifferentiators";
-import AdminBlogs from "@/components/admin/AdminBlogs";
-import AdminFaqs from "@/components/admin/AdminFaqs";
-import AdminCTA from "@/components/admin/AdminCTA";
-import AdminFooter from "@/components/admin/AdminFooter";
-import AdminInquiries from "@/components/admin/AdminInquiries";
+
+const AdminHeroSection = lazy(() => import("@/components/admin/AdminHeroSection"));
+const AdminAboutSection = lazy(() => import("@/components/admin/AdminAboutSection"));
+const AdminFounderSection = lazy(() => import("@/components/admin/AdminFounderSection"));
+const AdminOpenLearningTracks = lazy(() => import("@/components/admin/AdminOpenLearningTracks"));
+const AdminYoutubeChannels = lazy(() => import("@/components/admin/AdminYoutubeChannels"));
+const AdminTestimonials = lazy(() => import("@/components/admin/AdminTestimonials"));
+const AdminGoogleReviews = lazy(() => import("@/components/admin/AdminGoogleReviews"));
+const AdminGallery = lazy(() => import("@/components/admin/AdminGallery"));
+const AdminDifferentiators = lazy(() => import("@/components/admin/AdminDifferentiators"));
+const AdminBlogs = lazy(() => import("@/components/admin/AdminBlogs"));
+const AdminFaqs = lazy(() => import("@/components/admin/AdminFaqs"));
+const AdminCTA = lazy(() => import("@/components/admin/AdminCTA"));
+const AdminFooter = lazy(() => import("@/components/admin/AdminFooter"));
+const AdminInquiries = lazy(() => import("@/components/admin/AdminInquiries"));
 
 type NavItem = {
   id: string;
@@ -73,6 +74,29 @@ const navSections = [
     ]
   }
 ];
+
+const adminComponents = {
+  hero: AdminHeroSection,
+  about: AdminAboutSection,
+  founder: AdminFounderSection,
+  tracks: AdminOpenLearningTracks,
+  youtube: AdminYoutubeChannels,
+  testimonials: AdminTestimonials,
+  "google-reviews": AdminGoogleReviews,
+  gallery: AdminGallery,
+  differentiators: AdminDifferentiators,
+  blogs: AdminBlogs,
+  faqs: AdminFaqs,
+  cta: AdminCTA,
+  footer: AdminFooter,
+  inquiries: AdminInquiries,
+} as const;
+
+const SectionLoader = () => (
+  <div className="py-12 flex items-center justify-center">
+    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+  </div>
+);
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -167,25 +191,7 @@ const AdminPanel = () => {
     );
   }
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case "hero": return <AdminHeroSection />;
-      case "about": return <AdminAboutSection />;
-      case "founder": return <AdminFounderSection />;
-      case "tracks": return <AdminOpenLearningTracks />;
-      case "youtube": return <AdminYoutubeChannels />;
-      case "testimonials": return <AdminTestimonials />;
-      case "google-reviews": return <AdminGoogleReviews />;
-      case "gallery": return <AdminGallery />;
-      case "differentiators": return <AdminDifferentiators />;
-      case "blogs": return <AdminBlogs />;
-      case "faqs": return <AdminFaqs />;
-      case "cta": return <AdminCTA />;
-      case "footer": return <AdminFooter />;
-      case "inquiries": return <AdminInquiries />;
-      default: return <AdminHeroSection />;
-    }
-  };
+  const ActiveSection = adminComponents[activeTab as keyof typeof adminComponents] ?? AdminHeroSection;
 
   return (
     <div className="min-h-screen bg-muted/30 flex">
@@ -315,7 +321,9 @@ const AdminPanel = () => {
         {/* Content Area */}
         <div className="p-6">
           <div className="max-w-5xl">
-            {renderContent()}
+            <Suspense fallback={<SectionLoader />}>
+              <ActiveSection />
+            </Suspense>
           </div>
         </div>
       </main>
@@ -324,4 +332,3 @@ const AdminPanel = () => {
 };
 
 export default AdminPanel;
-

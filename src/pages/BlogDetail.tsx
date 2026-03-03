@@ -10,6 +10,7 @@ import SEO from "@/components/SEO";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { BLOG_FULL_COLUMNS } from "@/hooks/useSiteContent";
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -24,7 +25,7 @@ const BlogDetail = () => {
       if (error && slug) {
         const { data } = await supabase
           .from("blogs")
-          .select("*")
+          .select(BLOG_FULL_COLUMNS)
           .eq("id", slug)
           .single();
         if (data) setBlogData(data);
@@ -146,6 +147,7 @@ const BlogDetail = () => {
                   <img
                     src={currentBlog.image_url}
                     alt={currentBlog.title}
+                    decoding="async"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -227,4 +229,3 @@ const BlogDetail = () => {
 };
 
 export default BlogDetail;
-

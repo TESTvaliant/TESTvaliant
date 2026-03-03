@@ -12,7 +12,7 @@ import RichTextEditor from "./RichTextEditor";
 import ImageUpload from "./ImageUpload";
 
 const AdminOpenLearningTracks = () => {
-  const { data: tracks, isLoading } = useOpenLearningTracks();
+  const { data: tracks, isLoading } = useOpenLearningTracks({ includeFullContent: true });
   const updateTrack = useUpdateOpenLearningTrack();
   const [items, setItems] = useState<any[]>([]);
   const [savingId, setSavingId] = useState<string | null>(null);
