@@ -1,0 +1,93 @@
+Supabase Client Environment Audit
+Project root: C:\Users\Administrator\Desktop\TESTvaliant-main
+Audit date: 2026-02-28
+
+1) createClient() usage from "@supabase/supabase-js"
+
+A. Browser React/Vite client (package import)
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\src\integrations\supabase\client.ts
+- Line 3: import { createClient } from '@supabase/supabase-js';
+- Line 12: export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+
+Snippet:
+  3: import { createClient } from '@supabase/supabase-js';
+  6: const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+  7: const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+ 12: export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+
+URL key mapping:
+- URL arg: VITE_SUPABASE_URL (via SUPABASE_URL constant)
+- Key arg: VITE_SUPABASE_PUBLISHABLE_KEY (via SUPABASE_PUBLISHABLE_KEY constant)
+
+Vite prefix note:
+- Both env names use the required Vite client-exposed prefix `VITE_`.
+
+B. Supabase Edge Function client (URL import of supabase-js runtime)
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\supabase\functions\send-inquiry\index.ts
+- Line 4: import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+- Line 34: const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+Snippet:
+  4: import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+ 32: const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+ 33: const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+ 34: const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+URL key mapping:
+- URL arg: SUPABASE_URL
+- Key arg: SUPABASE_SERVICE_ROLE_KEY
+
+Vite prefix note:
+- Not applicable (server-side Deno edge function, not Vite browser env).
+
+C. Supabase Edge Function client (URL import of supabase-js runtime)
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\supabase\functions\upload-image\index.ts
+- Line 3: import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+- Line 84: const supabase = createClient(
+- Line 85: Deno.env.get("SUPABASE_URL")!,
+- Line 86: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+
+Snippet:
+  3: import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+ 84: const supabase = createClient(
+ 85:   Deno.env.get("SUPABASE_URL")!,
+ 86:   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+ 87: );
+
+URL key mapping:
+- URL arg: SUPABASE_URL
+- Key arg: SUPABASE_SERVICE_ROLE_KEY
+
+Vite prefix note:
+- Not applicable (server-side Deno edge function, not Vite browser env).
+
+2) Environment variable access patterns found
+
+A. import.meta.env usage
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\src\integrations\supabase\client.ts
+- Line 6: import.meta.env.VITE_SUPABASE_URL
+- Line 7: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+
+B. process.env usage
+- No `process.env` references were found anywhere in this project.
+
+C. Deno.env.get usage related to Supabase client creation
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\supabase\functions\send-inquiry\index.ts
+- Line 32: Deno.env.get("SUPABASE_URL")
+- Line 33: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+
+File: C:\Users\Administrator\Desktop\TESTvaliant-main\supabase\functions\upload-image\index.ts
+- Line 85: Deno.env.get("SUPABASE_URL")
+- Line 86: Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")
+
+3) All env variable names used in Supabase client creation
+- VITE_SUPABASE_URL
+- VITE_SUPABASE_PUBLISHABLE_KEY
+- SUPABASE_URL
+- SUPABASE_SERVICE_ROLE_KEY
+
+4) Quick production check note for React/Vite client
+- The browser client in `src\integrations\supabase\client.ts` correctly uses `VITE_` prefixed variables.
+- If production still fails, verify those two exact variables are defined in the deployed Vite environment:
+  - VITE_SUPABASE_URL
+  - VITE_SUPABASE_PUBLISHABLE_KEY

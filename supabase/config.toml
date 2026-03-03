@@ -1,0 +1,11 @@
+# website for testvaliant
+project_id = "brlcndzudfzfnxzzbrow"
+
+[functions.verify-admin]
+verify_jwt = false
+
+[functions.upload-image]
+verify_jwt = false
+
+[functions.send-inquiry]
+verify_jwt = false
